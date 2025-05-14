@@ -24,7 +24,11 @@ impl MessageHandler<UserCreatedEventMessage> for UserCreatedHandler {
 }
 
 fn main() {
-    let listener = CrosstownBus::new_queue_listener("amqp://guest:guest@localhost:5672".to_owned())
+    dotenv::dotenv().ok();
+
+    let rabbitmq_url = std::env::var("RABBITMQ_URL").unwrap_or_else(|_| "amqp://guest:guest@localhost:5672".to_string());
+
+    let listener = CrosstownBus::new_queue_listener(rabbitmq_url)
         .unwrap();
 
     _ = listener.listen(
